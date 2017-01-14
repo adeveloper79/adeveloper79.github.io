@@ -1,1 +1,494 @@
-Test
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta property="og:image" content="http://adeveloper79.github.io/amt.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Anonymous Mediatek Team Wallpaper Generator</title>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700' rel='stylesheet' type='text/css'>
+  <link href="css/style.css" rel="stylesheet" type="text/css">
+  <link href="css/sidebar.css" rel="stylesheet" type="text/css">
+</head>
+
+<body id="body">
+
+  <nav>
+    <div class="icon fi-list"></div>
+
+    <navTop>
+      <div class="wrapper">
+        <br>
+        <br>
+        <canvas width="512" height="512" id="input"></canvas>
+        <!--<h4 id="output">hsl(0, 50%, 50%)</h4>
+              <p id="lockStat">Click to lock</p>-->
+      </div>
+    </navTop>
+
+    <header><a href="#">Drag the text to put it where you want</a></header>
+
+    <!--<p>
+            Choose a background image:
+            <br><br>
+            <input id="file-picker" type="file"></input>
+        </p>-->
+
+    <p class="file-picker">
+      <button id="go-button"></button>
+      <label for="go-button">Toggle full screen</label>
+      <br>
+      <br> Press the button above to go full screen. Do this first to avoid messing up text position. Screenshot the page and you can set it as your desktop background. If things look wonky, try to zoom out.
+    </p>
+    <p class="file-picker">
+      Choose a background image
+      <br>
+      <br>
+      <input id="file-picker" type="file"></input>
+      <label for="file-picker">Upload your image</label>
+      <br>
+      <br>
+    </p>
+    <p>
+      Choose a flat background colour
+      <br>
+      <br>
+      <input type="text" id="bgc-picker" value="#000000"></input>
+      <br> color name, hex color, or rgba
+    </p>
+    <p>
+      Choose a highlight colour
+      <br>
+      <br>
+      <input type="text" id="hl-picker" value="#FACA04"></input>
+      <br> color name, hex color, or rgba
+    </p>
+    <p>
+      Choose a text colour
+      <br>
+      <br>
+      <input type="text" id="txt-picker" value="#FFFFFF"></input>
+      <br> color name, hex color, or rgba
+    </p>
+    <p>
+      Choose PC text colour
+      <br>
+      <br>
+      <input type="text" id="pc-txt-picker" value="#000000"></input>
+      <br> color name, hex color, or rgba
+    </p>
+    <p>
+      Choose text
+      <br>
+      <br>
+      <input style="margin-bottom:5px;" type="text" id="txt-pc-picker" value="AMT"></input>
+      <input style="margin-bottom:5px;" type="text" id="txt-mr-picker" value="Anonymous Mediatek"></input>
+      <input style="margin-bottom:5px;" type="text" id="txt-behold-picker" value="Mediatek"></input>
+      <input type="text" id="txt-glory-picker" value="Devs"></input>
+    </p>
+    <p>
+      Choose font
+      <br>
+      <br>
+      <input type="text" id="font-picker" value="Roboto"></input>
+    </p>
+    <p>
+      Change font size:
+      <br>
+      <br>
+      <input id="fs-input" type="range" min="0.01" step="0.01" max="2.0" value="1.0"></input>
+    </p>
+    <p>
+      Increase width to fix overspill:
+      <br>
+      <br>
+      <input id="width-input" type="range" min="0" max="1000" value="0"></input>
+      <br> Adjust this slider if text overflows.
+    </p>
+    <p>
+      <input type="checkbox" id="shadow-picker"> Shadow</input>&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="blur-picker"> Blur</input>
+    </p>
+  </nav>
+
+  <!-- Background -->
+  <div id="cont"></div>
+
+  <!-- AMT Logo -->
+  <div id="text">
+    <div class="left">
+      <span id="pc" class="pc">AMT</span>
+      <span id="mr" class="mr">Anonymous Mediatek</span>
+    </div>
+
+    <div class="right">
+      <span id="Mediatek"></span>
+      <br>
+      <span id="Devs"></span>
+    </div>
+  </div>
+
+  <div id="options-help">Move cursor to (or touch) left edge to show options</div>
+
+  <script>
+    var input = document.getElementById("file-picker");
+    var input2 = document.getElementById("hl-picker");
+    var input3 = document.getElementById("txt-picker");
+    var input4 = document.getElementById("pc-txt-picker");
+    var input5 = document.getElementById("shadow-picker");
+    var input6 = document.getElementById("blur-picker");
+    var input7 = document.getElementById("font-picker");
+    var input8 = document.getElementById("bgc-picker");
+    var input9 = document.getElementById("txt-pc-picker");
+    var input10 = document.getElementById("txt-mr-picker");
+    var input11 = document.getElementById("txt-behold-picker");
+    var input12 = document.getElementById("txt-glory-picker");
+    var input13 = document.getElementById("width-input");
+    var input14 = document.getElementById("fs-input");
+    var orgWidth = document.getElementById('text').offsetWidth;
+    var repeatColor;
+    var selColor;
+
+    function displayColorWheel(nameOption) {
+
+      var colors = document.getElementsByTagName("navTop");
+      colors[0].setAttribute("class", "open");
+      selColor = nameOption;
+    }
+
+    function disableOld() {
+
+      var colors = document.getElementsByTagName("navTop");
+      colors[0].removeAttribute("class");
+      clearTimeout(repeatColor);
+    }
+
+    function setBackgroundImage() {
+
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          document.getElementById("cont").style.backgroundImage = 'url(' + e.target.result + ')';
+        };
+
+        reader.readAsDataURL(input.files[0]);
+      };
+    };
+
+    function setHlCol() {
+      document.getElementById("pc").style.backgroundColor = input2.value;
+      document.getElementById("mr").style.borderRightColor = input2.value;
+
+      displayColorWheel("hl-picker");
+      repeatColor = setTimeout(setHlCol, 100);
+    }
+
+    function setTxtCol() {
+      document.getElementById("text").style.color = input3.value;
+
+      displayColorWheel("txt-picker");
+      repeatColor = setTimeout(setTxtCol, 100);
+    }
+
+    function setPCTxtCol() {
+      document.getElementById("pc").style.color = input4.value;
+
+      displayColorWheel("pc-txt-picker");
+      repeatColor = setTimeout(setPCTxtCol, 100);
+    }
+
+    function setPCTxt() {
+      document.getElementById("pc").innerHTML = input9.value;
+    }
+
+    function setMRTxt() {
+      document.getElementById("mr").innerHTML = input10.value;
+    }
+
+    function setBeholdTxt() {
+      document.getElementById("behold").innerHTML = input11.value;
+    }
+
+    function setGloryTxt() {
+      document.getElementById("glory").innerHTML = input12.value;
+    }
+
+    function setFont() {
+      document.body.style.fontFamily = input7.value;
+    }
+
+    function setBgc() {
+      document.getElementById("cont").style.backgroundColor = input8.value;
+
+      displayColorWheel("bgc-picker");
+      repeatColor = setTimeout(setBgc, 100);
+    }
+
+    function setShadow() {
+
+      if (input5.checked) {
+        document.getElementById("text").style.textShadow = "0 0 3px #000";
+        document.getElementById("pc").style.textShadow = "0 0 0";
+      } else {
+        document.getElementById("text").style.textShadow = "";
+      }
+    }
+
+    function setBlur() {
+
+      if (input6.checked) {
+        document.getElementById("cont").style.webkitFilter = "blur(5px)";
+        document.getElementById("cont").style.mozFilter = "blur(5px)";
+        document.getElementById("cont").style.filter = "blur(5px)";
+        document.getElementById("cont").style.transform = "scale(1.01)"
+      } else {
+        document.getElementById("cont").style.webkitFilter = "";
+        document.getElementById("cont").style.mozFilter = "";
+        document.getElementById("cont").style.filter = "";
+        document.getElementById("cont").style.transform = ""
+      }
+    }
+
+    function setWiderLayout() {
+      document.getElementById("text").style.width = (orgWidth + Number(input13.value)) + "px";
+    }
+
+    function setFontSize() {
+      document.getElementById("text").style.transform = "scale(" + Number(input14.value) + ")";
+    }
+
+
+    function hideBox() {
+      document.getElementById("options-help").style.display = "none";
+      var elem = document.getElementById("body");
+      if (elem.requestFullscreen) {
+        if (document.fullscreenElement == null) {
+          elem.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      } else if (elem.mozRequestFullScreen) {
+        console.log("debug1");
+        if (document.mozFullScreenElement == null) {
+          elem.mozRequestFullScreen();
+          console.log("debug3");
+        } else {
+          document.mozCancelFullScreen();
+          console.log("debug2");
+        }
+      } else if (elem.webkitRequestFullscreen) {
+        if (document.webkitFullscreenElement == null) {
+          elem.webkitRequestFullscreen();
+        } else {
+          document.webkitExitFullscreen();
+        }
+      } else if (elem.msRequestFullscreen) {
+        if (document.msFullscreenElement == null) {
+          elem.msRequestFullscreen();
+        } else {
+          document.msExitFullscreen();
+        }
+      }
+    };
+
+    document.getElementById("go-button").addEventListener("click", hideBox);
+    input.addEventListener("change", setBackgroundImage);
+    input2.addEventListener("click", function() {
+      disableOld();
+      setHlCol();
+    });
+    input8.addEventListener("click", function() {
+      disableOld();
+      setBgc();
+    });
+    input3.addEventListener("click", function() {
+      disableOld();
+      setTxtCol();
+    });
+    input4.addEventListener("click", function() {
+      disableOld();
+      setPCTxtCol();
+    });
+    input5.addEventListener("change", setShadow);
+    input6.addEventListener("change", setBlur);
+    input7.addEventListener("input", setFont);
+    input9.addEventListener("input", setPCTxt);
+    input10.addEventListener("input", setMRTxt);
+    input11.addEventListener("input", setBeholdTxt);
+    input12.addEventListener("input", setGloryTxt);
+    input13.addEventListener("input", setWiderLayout);
+    input14.addEventListener("input", setFontSize);
+
+    function doCentre() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var d = document.getElementById('text');
+      var divW = 900;
+      var divH = d.offsetHeight
+      d.style.top = (h / 2) - (divH / 2) + "px";
+      d.style.left = (w / 2) - (divW / 2) + "px";
+    };
+
+    window.addEventListener("resize", doCentre);
+
+    /* Future events for leaving full screen
+    function exitHandler() {
+      if ((document.webkitFullscreenElement || document.mozFullscreenElement || document.fullscreenElement) == null) {
+
+      }
+    }
+
+    document.addEventListener('webkitfullscreenchange', exitHandler, false);
+    document.addEventListener('mozfullscreenchange', exitHandler, false);
+    document.addEventListener('fullscreenchange', exitHandler, false);
+    document.addEventListener('MSFullscreenChange', exitHandler, false);
+    */
+
+    // thanks to http://jsfiddle.net/tovic/Xcb8d/light/
+    var selected = null, // Object of the element to be moved
+      x_pos = 0,
+      y_pos = 0, // Stores x & y coordinates of the mouse pointer
+      x_elem = 0,
+      y_elem = 0; // Stores top, left values (edge) of the element
+    // Will be called when user starts dragging an element
+    function _drag_init(elem) {
+      window.removeEventListener("resize", doCentre);
+      // Store the object of the element which needs to be moved
+      selected = elem;
+      x_elem = x_pos - selected.offsetLeft;
+      y_elem = y_pos - selected.offsetTop;
+    }
+
+    // Will be called when user dragging an element
+    function _move_elem(e) {
+      x_pos = document.all ? window.event.clientX : e.pageX;
+      y_pos = document.all ? window.event.clientY : e.pageY;
+
+      if (selected !== null) {
+        selected.style.left = (x_pos - x_elem) + 'px';
+        selected.style.top = (y_pos - y_elem) + 'px';
+      }
+    }
+
+    function _move_elem_touch(e) {
+      x_pos = document.all ? window.event.clientX : e.touches[0].pageX;
+      y_pos = document.all ? window.event.clientY : e.touches[0].pageY;
+
+      if (selected !== null) {
+        selected.style.left = (x_pos - x_elem) + 'px';
+        selected.style.top = (y_pos - y_elem) + 'px';
+      }
+    }
+
+    // Destroy the object when we are done
+    function _destroy() {
+      selected = null;
+    }
+
+    // Bind the functions...
+    document.getElementById('text').onmousedown = function() {
+      _drag_init(this);
+      return false;
+    };
+    document.getElementById('text').ontouchstart = function() {
+      _drag_init(this);
+      return false;
+    };
+
+    document.onmousemove = _move_elem;
+    document.ontouchmove = _move_elem_touch;
+    document.onmouseup = _destroy;
+    document.ontouchend = _destroy;
+    input5.click();
+
+
+
+    // Color Picker
+    // Original by Danie Clawson http://codepen.io/cl4ws0n/pen/GwFiC
+
+
+    var canvas = document.getElementById("input"),
+      //lock = document.getElementById("lockStat"),
+      ctx = canvas.getContext("2d")
+
+    canCen = {
+        x: canvas.width / 2,
+        y: canvas.height / 2
+      },
+
+      mouseAngle = 0,
+      mousePos = {
+        x: 0,
+        y: 0
+      },
+      mouseDist = 50,
+      useMouse = true,
+
+      canvas.addEventListener("mousemove", function(e) {
+        if (useMouse) {
+          var clientRect = canvas.getBoundingClientRect(),
+            x = (e.clientX - clientRect.left) * (canvas.width / canvas.offsetWidth),
+            y = (e.clientY - clientRect.top) * (canvas.height / canvas.offsetHeight),
+            n = 180 + (Math.atan2(canCen.y - y, canCen.x - x)) * 180 / Math.PI;
+
+          mouseDist = Math.round((Math.min(canCen.y - 64, Math.sqrt(Math.pow(canCen.x - x, 2) + Math.pow(canCen.y - y, 2))) / (canCen.y - 64)) * 100);
+          mouseAngle = Math.round(n % 360);
+          mousePos.x = x;
+          mousePos.y = y;
+
+          output = document.getElementById(selColor),
+            output.style.color = output.value = "hsl(" + mouseAngle + "," + mouseDist + "%, 50%)";
+        }
+      }, false);
+
+    canvas.addEventListener("mouseup", function() {
+
+      var colors = document.getElementsByTagName("navTop");
+      useMouse = !useMouse;
+
+      if (!useMouse) {
+        //lock.innerHTML = "Click to lock";
+        colors[0].removeAttribute("class");
+        clearTimeout(repeatColor);
+      }
+      //else {
+      //lock.innerHTML = "Click to unlock";
+      //}
+    }, false);
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (var i = 0; i < 360; i++) {
+        var scaleBack;
+        ctx.strokeStyle = ctx.fillStyle = "hsl(" + i + "," + mouseDist + "%, 50%)";
+
+        if (i == mouseAngle) {
+          scaleBack = 32;
+          ctx.lineWidth = 10;
+          ctx.beginPath();
+          ctx.arc((canCen.x) + (canCen.x - scaleBack) * Math.cos((i / 360) * Math.PI * 2), (canCen.y) + (canCen.y - scaleBack) * Math.sin((i / 360) * Math.PI * 2), 16, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          scaleBack = 64;
+          ctx.lineWidth = 5;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(canCen.x, canCen.y);
+
+        ctx.lineTo(
+          (canCen.x) + (canCen.x - scaleBack) * Math.cos((i / 360) * Math.PI * 2), (canCen.y) + (canCen.y - scaleBack) * Math.sin((i / 360) * Math.PI * 2)
+        );
+
+        ctx.stroke();
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+    setTimeout(doCentre, 100);
+  </script>
+</body>
+
+</html>
